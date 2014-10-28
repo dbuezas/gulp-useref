@@ -127,8 +127,16 @@ Specify the location to search for asset files, relative to the current working 
 Type: `Object`  
 Default: `none`  
 
-Specify per file type preprocessing function. For example ```{ css: function rebaseUrls(args){ return args.contentsBuffer.toString() + '/* file was here:'+ args.filepath +' */'; } }```, where args is 
-````
+Specify per file type preprocessing function. For example 
+```javascript
+{ 
+	css: function rebaseUrls(args){ 
+		return args.contentsBuffer.toString() + '/* file was here:'+ args.filepath +' */'; 
+	}
+}
+```
+where args is of the form:
+```javascript
 args = {
     args.contentsBuffer: ..., // a Buffer with the file contents 
     filepath: ..., // the original css file path
