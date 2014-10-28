@@ -19,11 +19,22 @@ npm install --save-dev gulp-useref
 The following example will parse the build blocks in the HTML, replace them and pass those files through. Assets inside the build blocks will be concatenated and passed through in a stream as well.
 
 ```js
+function preprocessCss(args) {
+    args = args || {};
+    console.log('css file contents:', args.contentsBuffer.toString()); 
+    console.log('original css file path:', args.filepath);
+    console.log('concatenated css file path:', args.destpath);
+}
+
 var gulp = require('gulp'),
     useref = require('gulp-useref');
 
 gulp.task('default', function () {
-    var assets = useref.assets();
+	var assets = useref.assets({
+		preprocess: {
+			css: preprocessCss
+		}
+	});
     
 	return gulp.src('app/*.html')
         .pipe(assets)
@@ -42,19 +53,8 @@ var gulp = require('gulp'),
     uglify = require('gulp-uglify'),
     minifyCss = require('gulp-minify-css');
 
-function preprocessCss(args) {
-    args = args || {};
-    console.log('css file contents:', args.contentsBuffer.toString()); 
-    console.log('original css file path:', args.filepath);
-    console.log('concatenated css file path:', args.destpath);
-}
-
 gulp.task('html', function () {
-    var assets = useref.assets({
-      preprocess: {
-        css: preprocessCss
-      }
-    });
+    var assets = useref.assets();
     
     return gulp.src('app/*.html')
         .pipe(assets)
@@ -120,6 +120,20 @@ Type: `String` or `Array`
 Default: `none`  
 
 Specify the location to search for asset files, relative to the current working directory. Can be a string or array of strings.
+
+#### options.preprocess
+
+Type: `Object`  
+Default: `none`  
+
+Specify per file type preprocessing function. For example ```{ css: function rebaseUrls(args){} }```, where args is 
+````
+args = {
+    args.contentsBuffer: ..., // a Buffer with the file contents 
+    filepath: ..., // the original css file path
+    destpath: ... // concatenated final file path
+}
+```
 
 ### stream.restore()
 
