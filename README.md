@@ -24,6 +24,7 @@ function preprocessCss(args) {
     console.log('css file contents:', args.contentsBuffer.toString()); 
     console.log('original css file path:', args.filepath);
     console.log('concatenated css file path:', args.destpath);
+    return args.contentsBuffer.toString() + '/* file was here:'+ args.filepath +' */';
 }
 
 var gulp = require('gulp'),
@@ -126,7 +127,7 @@ Specify the location to search for asset files, relative to the current working 
 Type: `Object`  
 Default: `none`  
 
-Specify per file type preprocessing function. For example ```{ css: function rebaseUrls(args){} }```, where args is 
+Specify per file type preprocessing function. For example ```{ css: function rebaseUrls(args){ return args.contentsBuffer.toString() + '/* file was here:'+ args.filepath +' */'; } }```, where args is 
 ````
 args = {
     args.contentsBuffer: ..., // a Buffer with the file contents 
