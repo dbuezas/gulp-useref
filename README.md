@@ -42,8 +42,19 @@ var gulp = require('gulp'),
     uglify = require('gulp-uglify'),
     minifyCss = require('gulp-minify-css');
 
+function preprocessCss(args) {
+    args = args || {};
+    console.log('css file contents:', args.contentsBuffer.toString()); 
+    console.log('original css file path:', args.filepath);
+    console.log('concatenated css file path:', args.destpath);
+}
+
 gulp.task('html', function () {
-    var assets = useref.assets();
+    var assets = useref.assets({
+      preprocess: {
+        css: preprocessCss
+      }
+    });
     
     return gulp.src('app/*.html')
         .pipe(assets)
