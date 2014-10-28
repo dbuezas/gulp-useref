@@ -34,6 +34,7 @@ module.exports.assets = function (options) {
         isAbsoluteUrl = require('is-absolute-url'),
         opts = options || {},
         types = opts.types || ['css', 'js'],
+        preprocess = opts.preprocess || {},
         restoreStream = through.obj();
 
     var assets = through.obj(function (file, enc, cb) {
@@ -78,7 +79,17 @@ module.exports.assets = function (options) {
                                     filenames.push(pattern);
                                 }
                                 try {
-                                    buffer.push(stripBom(fs.readFileSync(filenames[0])));
+                                    var filecontents = stripBom(fs.readFileSync(filenames[0]));
+                                    var preprocessed = filecontents;
+                                    if (preprocess[type]){
+                                        preprocessed = preprocess[type]({ 
+                                            contentsBuffer: new Buffer(filecontents),
+                                            filepath: filepath,
+                                            destpath: name
+                                        });
+                                    }
+
+                                    buffer.push(preprocessed);
                                 } catch (err) {
                                     this.emit('error', new gutil.PluginError('gulp-useref', err));
                                 }
